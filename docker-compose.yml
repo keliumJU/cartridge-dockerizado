@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    restart: "always"
+    ports:
+      - "8007:8000"
+    links:
+      - dbmysql:mysql
+    depends_on:
+      - dbmysql
+    networks: 
+      - app-network
+
+  dbmysql:
+    image: mysql:5.7
+    volumes:
+      - my-db:/var/lib/mysql
+    restart: "always"
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: "blog"
+      MYSQL_USER: "cms"
+      MYSQL_PASSWORD: "cms-blog"
+      MYSQL_ROOT_PASSWORD: "rootpass"
+    expose:
+      - "3306"
+    networks: 
+      - app-network
+# Names our volume
+volumes:
+  my-db:
+
+networks: 
+  app-network:
+    driver: bridge
